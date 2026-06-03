@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BepViet - Món Ngon Gia Đình</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="header">
+        <div style="position: absolute; top: 20px; right: 20px;" id="auth-buttons">
+            <button class="btn btn-light btn-sm" onclick="showLoginModal()">Đăng nhập</button>
+            <button class="btn btn-outline-light btn-sm" onclick="showRegisterModal()">Đăng ký</button>
+        </div>
+        
+        <div id="user-info" style="position: absolute; top: 20px; right: 20px; display: none;">
+            <button id="admin-panel-btn" class="btn btn-warning btn-sm me-2" style="display: none;" onclick="openAdminModalForAdd()">Quản lý dữ liệu</button>
+            <span id="userName" class="text-white me-2"></span>
+            <button class="btn btn-danger btn-sm" onclick="logout()">Đăng xuất</button>
+        </div>
+        
+        <div class="container-fluid">
+            <h1><i class="fas fa-utensils"></i> BepViet - Món Ngon Gia Đình</h1>
+            <p>Khám phá những món ăn ngon mỗi ngày</p>
+            
+            <div class="row justify-content-center mt-3">
+                <div class="col-md-6 col-10">
+                    <div class="input-group">
+                        <input type="text" id="search-input" class="form-control" placeholder="Tìm kiếm món ăn ngon tại đây...">
+                        <button class="btn btn-light text-orange" type="button" onclick="handleSearch()">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="sidebar-title">
+                <i class="fas fa-list"></i> Danh mục món ăn
+            </div>
+            <div id="category-list">
+                <div class="category-item active" onclick="loadMonAn()">
+                    <i class="fas fa-home"></i>
+                    <span>Tất cả món ăn</span>
+                </div>
+                
+                <div class="category-item text-danger" id="fav-menu-item" style="display: none;" onclick="loadFavoriteFoods()">
+                    <i class="fas fa-heart"></i>
+                    <span>Món yêu thích</span>
+                </div>
+                
+                <div class="loading"><i class="fas fa-spinner fa-spin"></i> Đang tải...</div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div id="monan-list">
+                <div class="loading"><i class="fas fa-spinner fa-spin"></i> Đang tải món ngon...</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <i class="fas fa-heart" style="color: #ff6b35;"></i> BepViet - Ẩm thực gia đình Việt 
+        <i class="fas fa-heart" style="color: #ff6b35;"></i>
+    </div>
+    
+    <div style="background: #1a1a2e; color: #ccc; text-align: center; padding: 20px;">
+        <p>📞 Hotline: 036 453 1568 | 📧 Email: contact@bepviet.com | 💬 Zalo: 036 453 1568</p>
+        <p>© 2024 BepViet - Món Ngon Gia Đình</p>
+    </div>
+
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="detailPanel">
+        <div class="offcanvas-header border-bottom">
+            <h5 class="offcanvas-title" style="color: #ff6b35;">
+                <i class="fas fa-info-circle"></i> Chi Tiết Món Ăn
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body" id="detailContent">
+            <div class="text-center py-5">
+                <i class="fas fa-hamburger fa-3x" style="color: #ccc;"></i>
+                <p class="mt-3 text-muted">Chọn một món ăn để xem chi tiết</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="loginModal" style="display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+        <div style="background:white; width:350px; padding:30px; border-radius:10px;">
+            <h3>Đăng nhập</h3>
+            <input type="text" id="loginUsername" placeholder="Tên đăng nhập" class="form-control mb-2">
+            <input type="password" id="loginPassword" placeholder="Mật khẩu" class="form-control mb-2">
+            <button onclick="login()" class="btn btn-primary w-100">Đăng nhập</button>
+            <button onclick="closeModal('loginModal')" class="btn btn-secondary w-100 mt-2">Đóng</button>
+        </div>
+    </div>
+
+    <div id="registerModal" style="display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+        <div style="background:white; width:350px; padding:30px; border-radius:10px;">
+            <h3>Đăng ký</h3>
+            <input type="text" id="regUsername" placeholder="Tên đăng nhập" class="form-control mb-2">
+            <input type="password" id="regPassword" placeholder="Mật khẩu" class="form-control mb-2">
+            <input type="text" id="regFullname" placeholder="Họ tên" class="form-control mb-2">
+            <button onclick="register()" class="btn btn-primary w-100">Đăng ký</button>
+            <button onclick="closeModal('registerModal')" class="btn btn-secondary w-100 mt-2">Đóng</button>
+        </div>
+    </div>
+
+    <div id="adminModal" style="display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center; overflow-y: auto;">
+        <div style="background:white; width:500px; padding:30px; border-radius:10px; margin: 50px auto;">
+            <h3 id="adminModalTitle">Thêm Món Ăn Mới</h3>
+            <hr>
+            <input type="hidden" id="adminMonAnId" value="">
+            
+            <input type="text" id="adminTenMon" placeholder="Tên món ăn" class="form-control mb-2">
+            <input type="text" id="adminMoTa" placeholder="Mô tả ngắn" class="form-control mb-2">
+            <input type="text" id="adminHinhAnh" placeholder="Đường dẫn ảnh (ví dụ: images/thit-kho.jpg)" class="form-control mb-2">
+            <select id="adminDanhMuc" class="form-control mb-2">
+                <option value="1">Món kho</option>
+                <option value="2">Món canh</option>
+                <option value="3">Món xào</option>
+                <option value="4">Món luộc</option>
+                <option value="5">Món chiên</option>
+            </select>
+            <textarea id="adminNguyenLieu" placeholder="Nguyên liệu cần chuẩn bị..." class="form-control mb-2" rows="3"></textarea>
+            <textarea id="adminCachLam" placeholder="Các bước thực hiện..." class="form-control mb-2" rows="4"></textarea>
+            
+            <button onclick="saveMonAn()" class="btn btn-success w-100">Lưu dữ liệu</button>
+            <button onclick="closeModal('adminModal')" class="btn btn-secondary w-100 mt-2">Đóng bảng quản lý</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
