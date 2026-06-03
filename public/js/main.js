@@ -485,13 +485,17 @@ async function login() {
 async function register() {
     const username = document.getElementById('regUsername').value;
     const password = document.getElementById('regPassword').value;
+    const confirmpassword = document.getElementById('regConfirmPassword').value;
     const fullname = document.getElementById('regFullname').value;
     
-    if (!username || !password) {
+    if (!username || !password || !confirmpassword) {
         alert('Vui lòng nhập tên đăng nhập và mật khẩu');
         return;
     }
-    
+    if (password.length < 4) {
+        alert('Đặt mật khẩu dài lên ít nhất 4 kí tự');
+        return;
+    }
     try {
         const res = await fetch('/api/register', {
             method: 'POST',
